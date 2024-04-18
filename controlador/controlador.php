@@ -30,8 +30,16 @@ function iniciarSesion($email, $contrasena)
     // Verificar las credenciales del usuario
     $usuario_valido = verificarCredenciales($email, $contrasena);
     if ($usuario_valido) {
-        // Iniciar sesión para el usuario
+        // Consultar el ID del usuario desde la base de datos
+        $sql = "SELECT id FROM usuario WHERE email='$email'";
+        $resultado = consultar($sql);
+        $fila = mysqli_fetch_assoc($resultado);
+        $id_usuario = $fila['id'];
+
+        // Iniciar sesión para el usuario y almacenar su ID
         $_SESSION['email'] = $email;
+        $_SESSION['id_usuario'] = $id_usuario;
+
         // Redirigir a la página de inicio
         header("Location: ../index.php");
         exit();
@@ -66,31 +74,28 @@ function registrarUsuario($nombre, $email, $contrasena)
 // Función para agregar una nueva noticia
 function agregarNoticia($id_autor, $titulo, $cuerpo, $fecha)
 {
-    // Consulta SQL para insertar la nueva noticia
-    $sql = "INSERT INTO noticia (id_autor, titulo, cuerpo, fecha) VALUES ('$id_autor', '$titulo', '$cuerpo', '$fecha')";
-
-    // Ejecutar la consulta
-    ejecutar($sql);
+    // Llamar a la función para crear la noticia desde la base de datos
+    crearNoticia($id_autor, $titulo, $cuerpo, $fecha);
 }
 
 // Función para editar una noticia existente
 function editarNoticia($id_noticia, $titulo, $cuerpo, $fecha)
 {
-    // Consulta SQL para actualizar la noticia
-    $sql = "UPDATE noticia SET titulo='$titulo', cuerpo='$cuerpo', fecha='$fecha' WHERE id='$id_noticia'";
-
-    // Ejecutar la consulta
-    ejecutar($sql);
+    // Llamar a la función para editar la noticia desde la base de datos
+    editarNoticia($id_noticia, $titulo, $cuerpo, $fecha);
+    // Redirigir automáticamente a la página principal después del registro
+    header("Location: ../index.php");
+    exit();
 }
 
 // Función para eliminar una noticia por su ID
 function eliminarNoticiaPorId($id_noticia)
 {
-    // Consulta SQL para eliminar la noticia
-    $sql = "DELETE FROM noticia WHERE id='$id_noticia'";
-
-    // Ejecutar la consulta
-    ejecutar($sql);
+    // Llamar a la función para eliminar la noticia desde la base de datos
+    eliminarNoticia($id_noticia);
+    // Redirigir de vuelta a la página principal
+    header("Location: ../index.php");
+    exit();
 }
 
 // Función para obtener todas las noticias

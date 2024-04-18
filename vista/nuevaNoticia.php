@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     agregarNoticia($id_autor, $titulo, $cuerpo, $fecha);
 
     // Redirigir a la página de inicio después de agregar la noticia
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 ?>
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     <main>
         <section id="nuevaNoticia">
             <h2>Agregar Nueva Noticia</h2>
-            <form action="vista/nuevaNoticia.php" method="post">
+            <form action="nuevaNoticia.php" method="post">
                 <label for="titulo">Título:</label>
                 <input type="text" id="titulo" name="titulo" required>
                 <label for="cuerpo">Cuerpo:</label>

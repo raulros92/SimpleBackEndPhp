@@ -17,6 +17,16 @@ if (isset($_GET['logout'])) {
     // Llamar a la función cerrarSesion del controlador
     cerrarSesion();
 }
+
+// Verificar si se ha enviado la solicitud de eliminación de noticia
+if (isset($_GET['action']) && $_GET['action'] == 'eliminar' && isset($_GET['id'])) {
+    // Verificar si hay una sesión iniciada antes de eliminar la noticia
+    if (isset($_SESSION['email'])) {
+        // Llamar a la función para eliminar la noticia
+        eliminarNoticiaPorId($_GET['id']);
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -69,23 +79,33 @@ if (isset($_GET['logout'])) {
         <section id="noticias">
             <h2>Noticias</h2>
             <?php
-            // Obtener todas las noticias del controlador
-            $noticias = obtenerTodasLasNoticias();
-            if ($noticias !== null) {
-                foreach ($noticias as $noticia) {
-                    echo "<div class='noticia'>";
-                    echo "<h3>" . $noticia['titulo'] . "</h3>";
-                    echo "<p>" . $noticia['fecha'] . " - " . $noticia['autor'] . "</p>";
-                    echo "<a href='noticiaCompleta.php?id=" . $noticia['id'] . "'>Ver más</a>";
-                    echo "</div>";
+            // Verificar si hay una sesión iniciada antes de mostrar las noticias
+            if (isset($_SESSION['email'])) {
+                // Obtener todas las noticias del controlador
+                $noticias = obtenerTodasLasNoticias();
+                if ($noticias !== null) {
+                    foreach ($noticias as $noticia) {
+                        echo "<div class='noticia'>";
+                        echo "<h3>" . $noticia['titulo'] . "</h3>";
+                        echo "<p>" . $noticia['fecha'] . " - " . $noticia['id_autor'] . "</p>";
+                        echo "<a href='vista/noticiaCompleta.php?id=" . $noticia['id'] . "'>Ver más</a>";
+                        // Mostrar los botones de editar y eliminar solo si el usuario actual es el autor de la noticia
+                        if (isset($_SESSION['id_usuario']) && $noticia['id_autor'] == $_SESSION['id_usuario']) {
+                            echo "<a href='vista/noticiaCompleta.php?id=" . $noticia['id'] . "&modo=editar'>Editar</a>";
+                            echo "<a href='index.php?action=eliminar&id=" . $noticia['id'] . "'>Borrar</a>";
+                        }
+                        echo "</div>";
+                    }
+                } else {
+                    echo "<p>No hay noticias disponibles.</p>";
                 }
-            } else {
-                echo "<p>No hay noticias disponibles.</p>";
+                // Mostrar botón de agregar noticia si hay sesión iniciada
+                echo "<a href='vista/nuevaNoticia.php'>Agregar Noticia</a>";
             }
             ?>
         </section>
-
     </main>
+
 </body>
 
 </html>

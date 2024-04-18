@@ -53,13 +53,6 @@ function crearNoticia($id_autor, $titulo, $cuerpo, $fecha)
     ejecutar($sql);
 }
 
-// Función para obtener todas las noticias
-function obtenerNoticias()
-{
-    $sql = "SELECT * FROM noticia";
-    return consultar($sql);
-}
-
 // Función para obtener una noticia por su ID
 function obtenerNoticiaPorId($id)
 {
