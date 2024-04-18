@@ -1,6 +1,6 @@
 <?php
 // Incluir el controlador
-require_once("../controlador/controlador.php");
+require_once(__DIR__ . "/../controlador/controlador.php");
 
 // Verificar si el formulario de registro ha sido enviado
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_registro"])) {
@@ -10,7 +10,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_registro"])) {
     $contrasena = $_POST["contrasena"];
 
     // Registrar al usuario
-    registrarUsuario($nombre, $email, $contrasena);
+    $registro_exitoso = registrarUsuario($nombre, $email, $contrasena);
+
+    // Si el registro no fue exitoso, mostrar un mensaje de error
+    if (!$registro_exitoso) {
+        echo "Hubo un error al registrar el usuario. Por favor, inténtelo de nuevo.";
+    }
 }
 ?>
 
@@ -27,13 +32,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_registro"])) {
 <body>
     <header>
         <h1>Registro de Usuario</h1>
-        <!-- Puedes incluir enlaces adicionales en el encabezado si es necesario -->
     </header>
 
     <main>
         <section id="registroUsuario">
             <h2>Registro de Nuevo Usuario</h2>
-            <form action="vista/registro.php" method="post">
+            <form action="registro.php" method="post">
                 <label for="nombre">Nombre:</label>
                 <input type="text" id="nombre" name="nombre" required>
                 <label for="email">Email:</label>

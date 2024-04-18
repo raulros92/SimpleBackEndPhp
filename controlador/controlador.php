@@ -1,12 +1,15 @@
 <!-- Controlador -->
 <?php
-require_once("../modelo/database.php");
+
+session_start(); // Iniciar la sesión
+
+require_once(__DIR__ . "/../modelo/database.php");
 
 // Función para verificar las credenciales del usuario
 function verificarCredenciales($email, $contrasena)
 {
     // Consulta SQL para verificar las credenciales
-    $sql = "SELECT * FROM usuarios WHERE email='$email' AND contrasena='$contrasena'";
+    $sql = "SELECT * FROM usuario WHERE email='$email' AND contrasena='$contrasena'";
 
     // Ejecutar la consulta
     $resultado = consultar($sql);
@@ -30,22 +33,34 @@ function iniciarSesion($email, $contrasena)
         // Iniciar sesión para el usuario
         $_SESSION['email'] = $email;
         // Redirigir a la página de inicio
-        header("Location: index.php");
+        header("Location: ../index.php");
         exit();
     } else {
         // Mostrar mensaje de error al usuario
-        echo "Credenciales incorrectas. Por favor, inténtelo de nuevo.";
+        $_SESSION['mensaje_error'] = "Credenciales incorrectas. Por favor, inténtelo de nuevo.";
+        // Permanecer en la página actual
+        return false;
     }
+}
+
+// Función para cerrar sesión
+function cerrarSesion()
+{
+    // Destruir la sesión
+    session_destroy();
+    // Redirigir a la página de inicio
+    header("Location: ../index.php");
+    exit();
 }
 
 // Función para registrar un nuevo usuario
 function registrarUsuario($nombre, $email, $contrasena)
 {
-    // Consulta SQL para insertar el nuevo usuario
-    $sql = "INSERT INTO usuarios (nombre, email, contrasena) VALUES ('$nombre', '$email', '$contrasena')";
-
-    // Ejecutar la consulta
+    $sql = "INSERT INTO usuario (nombre, email, contrasena) VALUES ('$nombre', '$email', '$contrasena')";
     ejecutar($sql);
+    // Redirigir automáticamente a la página principal después del registro
+    header("Location: ../index.php");
+    exit();
 }
 
 // Función para agregar una nueva noticia

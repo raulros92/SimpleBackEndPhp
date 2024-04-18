@@ -1,7 +1,6 @@
 <!-- Conexion y funciones con la base de datos -->
 <?php
 require_once("datos_conexion.php");
-require_once("../controlador/controlador.php");
 
 // Función para establecer la conexión a la base de datos
 function conectar()
@@ -10,7 +9,7 @@ function conectar()
     if (!$conexion) {
         die("Error de conexión: " . mysqli_connect_error());
     } else {
-        echo "Conexión establecida con éxito"; // Mensaje de éxito
+        // echo "Conexión establecida con éxito";
         return $conexion;
     }
 }
@@ -39,8 +38,7 @@ function ejecutar($sql)
 {
     $conexion = conectar();
     if (mysqli_query($conexion, $sql)) {
-        // La consulta se ejecutó con éxito
-        echo "Consulta ejecutada con éxito"; // Mensaje de éxito
+        // echo "Consulta ejecutada con éxito";
     } else {
         // La consulta falló
         die("Error al ejecutar la consulta: " . mysqli_error($conexion));
@@ -88,7 +86,7 @@ function eliminarNoticia($id)
 function obtenerIdUsuarioPorEmail($email)
 {
     // Consulta SQL para obtener el ID del usuario por su correo electrónico
-    $sql = "SELECT id FROM usuarios WHERE email='$email'";
+    $sql = "SELECT id FROM usuario WHERE email='$email'";
 
     // Ejecutar la consulta
     $resultado = consultar($sql);

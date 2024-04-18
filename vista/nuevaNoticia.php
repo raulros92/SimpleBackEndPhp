@@ -1,6 +1,6 @@
 <?php
 // Incluir el controlador
-require_once("../controlador/controlador.php");
+require_once(__DIR__ . "/../controlador/controlador.php");
 
 // Verificar si se ha enviado el formulario para agregar una nueva noticia
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {

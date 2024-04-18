@@ -1,6 +1,6 @@
 <?php
 // Incluir el controlador
-require_once("../controlador/controlador.php");
+require_once(__DIR__ . "/../controlador/controlador.php");
 
 // Verificar si se ha proporcionado un ID de noticia en la URL
 if (isset($_GET['id'])) {

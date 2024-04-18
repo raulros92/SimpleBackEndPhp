@@ -1,6 +1,22 @@
 <?php
 // Incluir el controlador
-require_once("controlador/controlador.php");
+require_once(__DIR__ . "/controlador/controlador.php");
+
+// Verificar si se ha enviado el formulario de inicio de sesión
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_login"])) {
+    // Obtener los datos del formulario
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+
+    // Llamar a la función iniciarSesion del controlador
+    iniciarSesion($email, $password);
+}
+
+// Verificar si se ha enviado la solicitud de logout
+if (isset($_GET['logout'])) {
+    // Llamar a la función cerrarSesion del controlador
+    cerrarSesion();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,24 +35,31 @@ require_once("controlador/controlador.php");
         // Mostrar nombre de usuario y botón de logout si hay una sesión iniciada
         if (isset($_SESSION['email'])) {
             echo "<p>Bienvenido, " . $_SESSION['email'] . "</p>";
-            echo "<a href='controlador.php?logout=true'>Logout</a>";
+            echo "<a href='index.php?logout=true'>Logout</a>";
+        } else {
+            // Mostrar formulario de inicio de sesión si el usuario no está autenticado
+            echo "
+            <section id='inicioSesion'>
+                <h2>Iniciar Sesión</h2>";
+            // Mostrar mensaje de error si existe
+            if (isset($_SESSION['mensaje_error'])) {
+                echo "<p>{$_SESSION['mensaje_error']}</p>";
+                unset($_SESSION['mensaje_error']);
+            }
+            echo "
+                <form action='index.php' method='post'>
+                    <label for='email'>Email:</label>
+                    <input type='email' id='email' name='email' required>
+                    <label for='password'>Contraseña:</label>
+                    <input type='password' id='password' name='password' required>
+                    <button type='submit' name='submit_login'>Iniciar Sesión</button>
+                </form>
+            </section>";
         }
         ?>
     </header>
 
     <main>
-        <!-- Formulario de inicio de sesión -->
-        <section id="inicioSesion">
-            <h2>Iniciar Sesión</h2>
-            <form action="controlador.php" method="post">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
-                <button type="submit" name="submit_login">Iniciar Sesión</button>
-            </form>
-        </section>
-
         <!-- Botón para acceder a la página de registro -->
         <section id="registroUsuario">
             <a href="vista/registro.php">Registrarse</a>
