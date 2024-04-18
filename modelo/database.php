@@ -1,27 +1,35 @@
 <!-- Conexion y funciones con la base de datos -->
 <?php
-require_once 'datos_conexion.php';
+require_once("datos_conexion.php");
+require_once("../controlador/controlador.php");
 
 // Función para establecer la conexión a la base de datos
 function conectar()
 {
-    $conexion = new mysqli(HOST, USER, PASSWORD, DATABASE);
-    if ($conexion->connect_error) {
-        die("Error de conexión: " . $conexion->connect_error);
+    $conexion = mysqli_connect(HOST, USER, PASSWORD, DATABASE);
+    if (!$conexion) {
+        die("Error de conexión: " . mysqli_connect_error());
     } else {
         echo "Conexión establecida con éxito"; // Mensaje de éxito
-        return $conexion; // Devolver el objeto mysqli
+        return $conexion;
     }
+}
+
+// Función para cerrar la conexión a la base de datos
+function cerrarConexion($conexion)
+{
+    mysqli_close($conexion);
 }
 
 // Función para ejecutar consultas SELECT
 function consultar($sql)
 {
     $conexion = conectar();
-    $resultado = $conexion->query($sql);
+    $resultado = mysqli_query($conexion, $sql);
     if (!$resultado) {
-        die("Error al ejecutar la consulta: " . $conexion->error);
+        die("Error al ejecutar la consulta: " . mysqli_error($conexion));
     } else {
+        cerrarConexion($conexion); // Cerrar la conexión
         return $resultado;
     }
 }
@@ -30,20 +38,21 @@ function consultar($sql)
 function ejecutar($sql)
 {
     $conexion = conectar();
-    if ($conexion->query($sql)) {
+    if (mysqli_query($conexion, $sql)) {
         // La consulta se ejecutó con éxito
-        return "Consulta ejecutada con éxito";
+        echo "Consulta ejecutada con éxito"; // Mensaje de éxito
     } else {
         // La consulta falló
-        die("Error al ejecutar la consulta: " . $conexion->error);
+        die("Error al ejecutar la consulta: " . mysqli_error($conexion));
     }
+    cerrarConexion($conexion); // Cerrar la conexión
 }
 
 // Función para crear una nueva noticia
 function crearNoticia($id_autor, $titulo, $cuerpo, $fecha)
 {
     $sql = "INSERT INTO noticia (id_autor, titulo, cuerpo, fecha) VALUES ('$id_autor', '$titulo', '$cuerpo', '$fecha')";
-    return ejecutar($sql);
+    ejecutar($sql);
 }
 
 // Función para obtener todas las noticias
@@ -58,21 +67,39 @@ function obtenerNoticiaPorId($id)
 {
     $sql = "SELECT * FROM noticia WHERE id = $id";
     $resultado = consultar($sql);
-    return $resultado->fetch_assoc();
+    return mysqli_fetch_assoc($resultado);
 }
 
 // Función para actualizar una noticia
 function actualizarNoticia($id, $titulo, $cuerpo, $fecha)
 {
     $sql = "UPDATE noticia SET titulo = '$titulo', cuerpo = '$cuerpo', fecha = '$fecha' WHERE id = $id";
-    return ejecutar($sql);
+    ejecutar($sql);
 }
 
 // Función para eliminar una noticia por su ID
 function eliminarNoticia($id)
 {
     $sql = "DELETE FROM noticia WHERE id = $id";
-    return ejecutar($sql);
+    ejecutar($sql);
+}
+
+// Función para obtener el ID del usuario por su correo electrónico
+function obtenerIdUsuarioPorEmail($email)
+{
+    // Consulta SQL para obtener el ID del usuario por su correo electrónico
+    $sql = "SELECT id FROM usuarios WHERE email='$email'";
+
+    // Ejecutar la consulta
+    $resultado = consultar($sql);
+
+    // Verificar si se encontró el usuario
+    if ($fila = mysqli_fetch_assoc($resultado)) {
+        return $fila['id'];
+    } else {
+        // Si el usuario no existe, devolver null o algún otro valor predeterminado
+        return null;
+    }
 }
 
 ?>
